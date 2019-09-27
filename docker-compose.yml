@@ -1,0 +1,42 @@
+version: '2'
+services:
+  backend:
+    build: ./
+    image: genial
+    container_name: "genial_backend"
+    ports:
+      - 7075:7070
+    env_file:
+      - ./api.env
+    working_dir: /var/www
+    command: >
+      bash -c "bundle update
+      && passenger start --pool-idle-time 30 --max-pool-size 30 --debugger --port 7070"
+    volumes:
+      - ./:/var/www
+      - ./passenger/support-binaries/:/usr/lib/passenger/support-binaries/
+    links:
+      - mongo:mongo
+  mongo:
+    image: mongo:3.4
+    container_name: "genial_mongodb"
+    restart: always
+    volumes:
+      - ./server/data/db/:/data/db
+      - ./server/log/mongodb/:/var/log/mongodb/
+      - ./server/root/:/root
+    ports:
+      - 27025:27017
+    command: mongod --logpath /var/log/mongodb/mongod.log
+    environment:
+      MONGO_INITDB_DATABASE: genial
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8090:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password

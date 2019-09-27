@@ -1,0 +1,34 @@
+development:
+  clients:
+    default:
+      database: genial
+      hosts:
+        - mongo
+      options:
+        user: 'genialdev'
+        password: 'mimamamemima'
+        auth_mech: :scram
+        auth_source: :genial
+        max_pool_size: 25
+        roles:
+          - 'readWrite'
+          - 'dbOwner'
+  options:
+    raise_not_found_error: false
+production:
+  clients:
+    default:
+      database: genial
+      hosts:
+        - mongo
+      options:
+        user: 'genialdev'
+        password: 'mimamamemima'
+        auth_mech: :scram
+        auth_source: :genial
+        max_pool_size: 25
+        roles:
+          - 'readWrite'
+          - 'dbOwner'
+  options:
+    raise_not_found_error: false

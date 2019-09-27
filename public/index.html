@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cosas Geniales</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/wordcloud.js"></script>
+</head>
+<body>
+<div id="container" style="min-width: 250px; max-width: 550px; margin: 0 auto"></div>
+<script lang="javascript">
+    var data = [];
+    var req = new XMLHttpRequest();
+    req.open('GET', "/v1/phrases/get", true);
+    req.onreadystatechange = function (aEvt) {
+        if (req.readyState == 4) {
+            if(req.status == 200) {
+                var words = JSON.parse(req.response);
+                if (typeof words.word_cloud != "undefined") {
+                    var word_cloud = words.word_cloud;
+                    for (var i = 0; i < word_cloud.length; i++) {
+                        var newWord = {
+                            name: word_cloud[i]._id,
+                            weight: word_cloud[i].count
+                        };
+                        data.push(newWord);
+                    }
+                }
+                Highcharts.chart('container', {
+                    series: [{
+                        type: 'wordcloud',
+                        data: data,
+                        name: 'Repetidas'
+                    }],
+                    title: {
+                        text: 'Cosas Geniales'
+                    }
+                });
+            } else {
+                console.log("Error loading page\n");
+            }
+        }
+    };
+    req.send(null);
+</script>
+</body>
+</html>
